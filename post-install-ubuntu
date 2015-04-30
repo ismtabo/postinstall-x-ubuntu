@@ -1,0 +1,230 @@
+#! /bin/bash
+
+# Versión 14.04 del Script Ubuntu 14.04 Post Install
+
+# Ubuntu 14.04 (Trusty Tahr)
+
+# Autor: Ismael Taboada
+
+
+# Actualizamos sistema operativo
+echo Bienvenido al script post install del GUI$'\n'Primero de todo, actualizemos su sistema
+read a
+
+apt-get update && apt-get dist-upgrade --yes
+
+echo
+echo Actualizando sus controladores de hardware:
+
+add-apt-repository --yes ppa:xorg-edgers/ppa
+apt-get update
+apt-get upgrade --yes
+
+#----- Java ------
+echo Instalación de Java:
+
+# Java. OpenJDK. La versión libre de la plataforma de desarrollo Java (para desarrolladores)
+# Java. OpenJRE. La versión libre de la plataforma de desarrollo Java (para usuarios)
+# Java. Icedtea. La versión libre del plugin para ejecutar Java en el navegador
+
+echo Openjdk $'\&' Icedtea plugin
+echo Java 7:
+apt-get install -y icedtea-7-plugin openjdk-7-jre
+apt-get install -y openjdk-7-jdk
+echo Java 6:
+apt-get install -y icedtea-6-plugin openjdk-6-jre
+apt-get install -y openjdk-6-jdk
+
+# Java. Oracle. La versión propietaria del software de Java.
+
+echo Oracle Java:
+add-apt-repository ppa:webupd8team/java --yes
+apt-get update
+echo Java 8:
+apt-get install -y oracle-java8-installer
+echo Java 7:
+apt-get install -y oracle-java7-installer
+echo ¿Desea elegir la versión de Java$'\?'$'\('y/N$'\)'$'\n'$'\('Usada en laboratorios openjdk-7-jdk$'\)'
+read answer
+
+if [[ $answer -eq "y" ]]; then
+	#statements
+	update-alternatives --config java
+else
+	update-java-alternatives -s java-7-openjdk-amd64
+fi
+
+#----- Paquetes y codecs extras -----
+
+echo Paquetes y codecs extras:
+
+# Ubuntu Restricted Extras, Codecs y fuentes adicionales, Java, Flash, etc.,software esencial no incluido por razones legales.
+
+apt-get install -y ubuntu-restricted-extras
+
+# Extra codecs para reproducir varieda de formatos video/audio
+
+apt-get install -y libavcodec-extra x264
+
+# Para las fuentes de Microsoft añadirlas a todas las aplicaciones (# comentado)
+
+apt-get install -y ttf-mscorefonts-installer
+
+fc-cache
+
+# Paquete libdvdread4 para reproducir dvds encriptados
+
+apt-get -y install gstreamer0.10-plugins-ugly libxine1-ffmpeg gxine mencoder libdvdread4 totem-mozilla icedax tagtool easytag id3tool lame nautilus-script-audio-convert libmad0 mpg321
+
+/usr/share/doc/libdvdread4/install-css.sh
+
+#libdvdcss - para poder ver DVD's / CD's originales o comerciales:
+
+apt-get -y install curl
+
+curl ftp://ftp.videolan.org/pub/debian/videolan-apt.asc | apt-key add -
+
+echo "deb ftp://ftp.videolan.org/pub/debian/stable ./" | tee /etc/apt/sources.list.d/libdvdcss.list
+
+apt-get update
+
+# libdvdcss2
+
+apt-get install -y libdvdcss2
+
+# libdvdread4
+
+/usr/share/doc/libdvdread4/install-css.sh
+
+# Adobe Flash plugin
+
+apt-get -y install flashplugin-installer
+
+#----- Programas de Instalación -----
+
+echo Instalando herramientas de instalacion:
+
+apt-get install -y synaptic aptitude gdebi gksu
+
+#----- Herramientas de compresión -----
+
+echo Programas de compresion:
+
+apt-get install -y p7zip-full p7zip-rar rar unrar
+
+#----- Software basico de compilacion -----
+
+apt-get install -y build-essential
+
+# Librerias de desarrollo del kernel
+
+apt-get install -y linux-headers-`uname -r`
+
+#----- Indicadores y herramientas del sistema -----
+
+# Monitorizacion de temperaturas del sistema
+
+apt-get install -y lm-sensors hddtemp
+
+# laptop_mode, evitar altas temperaturas portátil.
+echo ¿Es su equipo un portátil o una torre$'\?'$'('Y/n$'\)'
+if [[ $answer != "n" ]]; then
+	#statements
+	apt-get -y install laptop-mode-tools
+fi
+
+# Nautilus
+
+apt-get install -y nautilus
+
+# Añadida opción de 'Abrir terminal aquí' para nautilus
+
+apt-get -y install nautilus-open-terminal
+nautilus -q
+
+#----- Wine -----
+
+# Wine es un software capaz de hacer creer a los programas creados para Window$ que están instalándose y trabajando en un entorno Window$.
+
+add-apt-repository ppa:ubuntu-wine/ppa
+
+apt-get update
+
+apt-get install -y wine cabextract
+
+#---Navegadores---
+
+# Chromium, Navegador proyecto libre en el cual Google está basando el desarrollo de su navegador Google Chrome.
+
+apt-get -y install chromium-browser chromium-codecs-ffmpeg-extra webaccounts-chromium-extension unity-chromium-extension
+
+#---Editores interfaz---
+
+# Unity Tweak Tool, aplicación para configurar el escritorio de Unity
+
+apt-get -y install unity-tweak-tool
+
+# gnome-tweak-tool, Programa nos servirá para aplicar temas, añadir opciones al sistema, para configurar Gnome Shell y Unity.
+
+apt-get -y install gnome-tweak-tool
+
+#---Editores de desarrollo---
+
+# Geany, editor de código (C, C++, C#, Java, JavaScript, PHP, HTML, CSS, Python, Perl, Ruby, Fortran, Pascal y Haskell..).
+
+apt-get -y install geany
+
+# Bluefish, editor de código (para HTML, PHP, Javascript, JSP, SQL, XML, Python, Perl, CSS, ColdFusion, Pascal, R, Octave/Matlab...).
+
+apt-get -y install bluefish
+
+# Eclipse Kepler (4.3.2)
+
+wget https://www.gui.uva.es/~isma/install_party/eclipse-standard-kepler-SR2-linux-gtk-x86_64.tar.gz
+tar -zxf eclipse-standard-kepler-SR2-linux-gtk-x86_64.tar.gz
+mv eclipse /opt 
+ln -s /opt/eclipse/eclipse /usr/bin/eclipse
+
+# Creamos lanzador en Unity
+echo [Desktop Entry]$'\n'Version=4.3.0$'\n'Name=Eclipse$'\n'Comment=IDE for all seasons$'\n'Exec=env UBUNTU_MENUPROXY=0 /opt/eclipse/eclipse$'\n'Icon=/opt/eclipse/icon.xpm$'\n'Terminal=false$'\n'Type=Application$'\n'Categories=Utility\;Application\;Development\;IDE >/usr/share/applications/eclipse.desktop
+
+# Netbeans 8.0
+
+wget https://www.gui.uva.es/~isma/install_party/netbeans-8.0.1-javase-linux.sh
+chmod +x netbeans-8.0.1-javase-linux.sh
+./netbeans-8.0.1-javase-linux.sh
+
+#---Reproductores videos---
+
+# VLC, reproductor multimedia archivos multimedia, así como DVD, protocolos Audio CD, VCD y streaming diversos..
+
+apt-get -y install vlc vlc-plugin-pulse libvlc5
+
+#---Otros escritorios---
+
+# gnome-session-fallback, Iniciar sesión con Ubuntu Clásico.
+
+apt-get -y install gnome-session-fallback
+
+#---FTP---
+
+# Filezilla, cliente FTP. Posee una agradable e intuitiva interfaz. Sustenta FTP, SFTP y FTP sobre SSL..
+
+apt-get -y install filezilla
+
+#---Editores de imagen---
+
+# Gimp con plugins. Programa libre, de edición de imágenes digitales, similar a Photoshop.
+
+apt-get -y install gimp gimp-plugin-registry gimp-ufraw gimp-gmic
+
+# InkScape, editor de Gráficos Vectoriales, similar al Adobe Illustrator, que busca ser compatible con SVG.
+
+apt-get -y install inkscape
+
+#----- Actualización ------
+
+apt-get update
+
+apt-get upgrade
+

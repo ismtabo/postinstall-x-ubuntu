@@ -1,0 +1,74 @@
+#! /bin/bash
+
+# Versión 14.04 del Script Xubuntu 14.04 Post Install
+
+# Xubuntu 14.04
+
+# Autor: Ismael Taboada
+
+
+# Actualizamos sistema operativo
+echo Bienvenido al script post install del GUI$'\n'Primero de todo, actualizemos su sistema
+read a
+
+apt-get update && apt-get dist-upgrade --yes
+
+#----- Java ------
+echo Instalación de Java:
+
+# Java. OpenJDK. La versión libre de la plataforma de desarrollo Java (para desarrolladores)
+# Java. OpenJRE. La versión libre de la plataforma de desarrollo Java (para usuarios)
+# Java. Icedtea. La versión libre del plugin para ejecutar Java en el navegador
+
+echo Openjdk $'\&' Icedtea plugin
+echo Java 7:
+apt-get install -y icedtea-7-plugin openjdk-7-jre
+apt-get install -y openjdk-7-jdk
+#echo Java 6:
+#apt-get install -y icedtea-6-plugin openjdk-6-jre
+#apt-get install -y openjdk-6-jdk
+
+# Java. Oracle. La versión propietaria del software de Java.
+
+echo Oracle Java:
+add-apt-repository ppa:webupd8team/java --yes
+apt-get update
+echo Java 8:
+apt-get install -y oracle-java8-installer
+echo Java 7:
+apt-get install -y oracle-java7-installer
+echo ¿Desea elegir la versión de Java$'\?'$'\('y/N$'\)'$'\n'$'\('Usada en laboratorios openjdk-7-jdk$'\)'
+read answer
+
+if [[ $answer -eq "y" ]]; then
+	#statements
+	update-alternatives --config java
+else
+	update-java-alternatives -s java-7-openjdk-amd64
+fi
+
+#---Editores de desarrollo---
+
+# Geany, editor de código (C, C++, C#, Java, JavaScript, PHP, HTML, CSS, Python, Perl, Ruby, Fortran, Pascal y Haskell..).
+
+apt-get -y install geany
+
+# Eclipse Kepler (4.3.2)
+
+wget https://www.gui.uva.es/~isma/install_party/eclipse-standard-kepler-SR2-linux-gtk-x86_64.tar.gz
+tar -zxf eclipse-standard-kepler-SR2-linux-gtk-x86_64.tar.gz
+mv eclipse /opt 
+ln -s /opt/eclipse/eclipse /usr/bin/eclipse
+
+# Netbeans 8.0
+
+wget https://www.gui.uva.es/~isma/install_party/netbeans-8.0.1-javase-linux.sh
+chmod +x netbeans-8.0.1-javase-linux.sh
+./netbeans-8.0.1-javase-linux.sh
+
+# Sublime Text 2
+
+add-apt-repository ppa:webupd8team/sublime-text-2
+apt-get update
+apt-get install sublime-text
+
